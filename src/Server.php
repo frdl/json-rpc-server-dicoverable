@@ -29,7 +29,7 @@ use UMA\JsonRpc\Procedure;
 use Opis\JsonSchema\Validator as OpisValidator;
 
 
-class Server /* extends \UMA\JsonRpc\Server //cannot extend due to private properties */
+class Server /* extends \UMA\JsonRpc\Server */
 {
 
 	protected $config = [];
@@ -66,7 +66,7 @@ class Server /* extends \UMA\JsonRpc\Server //cannot extend due to private prope
 		'schemaCacheDir' => sys_get_temp_dir() . \DIRECTORY_SEPARATOR . get_current_user(). \DIRECTORY_SEPARATOR . 'json-schema-store' . \DIRECTORY_SEPARATOR,
 		'discovery' => 	$discovery,
 		'meta' => [
-		  'openrpc' => 'GENERATED FIELD: Do Not Edit',
+		  'openrpc' => '1.0.0-rc1',
 		  "info" => [
               "title" => "JSON-RPC Server",
               "description" =>"This the RPC-part of an Frdlweb API Server definition https://look-up.webfan3.de/?goto=oid%3A1.3.6.1.4.1.37553.8.1.8.1.13878",
@@ -274,7 +274,7 @@ class Server /* extends \UMA\JsonRpc\Server //cannot extend due to private prope
 		if( $procedure && true !== $response instanceof Error && $procedure instanceof MethodDiscoverableInterface){
 			
 		   $spec = 	$procedure->getResultSpec();
-			
+				
 			$result = json_decode(json_encode($response));
 
            if (!self::validateResponse($validation, $spec, $result->result, $Server)) {
@@ -294,24 +294,16 @@ class Server /* extends \UMA\JsonRpc\Server //cannot extend due to private prope
 	
 	
 	
-    protected static function validateResponse(&$validation = null, \stdClass $schema, $data, Server $Server = null): bool
+    public static function validateResponse(&$validation = null, \stdClass $schema, $data, Server $Server = null): bool
     {
 		
 		
         \assert(false !== \json_encode($data));
 
-       // if (null === $schema) {
-     //       return true;
-      //  }
-/*
-		'schemaLoaderPrefix' => '',
-		'schemaLoaderDirs' => [],	
-		'schemaCacheDir' => __DIR__.\DIRECTORY_SEPARATOR.'schema-store'.\DIRECTORY_SEPARATOR,		
-		*/
 		
 		
 		if(null!==$Server){
-		  $config = $Server->getConfig();	
+		  $config =$Server->getConfig();	
 		}else{
 			$config = [
 				        'schemaLoaderPrefix' => 'https://json-schema.org',

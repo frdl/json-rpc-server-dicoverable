@@ -6,7 +6,10 @@
   "require" : {
 	  "php": ">=7.1",
 		"uma/json-rpc" : "^2.2.1"	
-  },	  
+  },	
+  "suggest": {
+        "frdl/json-rpc-server-eventable": "Allows using the PRC-Server events"
+   },	
   "autoload": {
         "psr-4": {
             "frdlweb\\Api\\Rpc\\": "src/"

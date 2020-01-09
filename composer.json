@@ -1,0 +1,15 @@
+{
+  "name" : "frdl/json-rpc-server-dicoverable",
+  "type" : "library",
+  "description": "rpc.discover procedure for uma/json-rpc.",	  
+  "license": ["MIT"],	  
+  "require" : {
+	  "php": ">=7.1",
+		"uma/json-rpc" : "^2.2.1"	
+  },	  
+  "autoload": {
+        "psr-4": {
+            "frdlweb\\Api\\Rpc\\": "src/"
+        }
+  }  
+}

@@ -8,6 +8,8 @@ use frdlweb\Api\Rpc\MethodDiscoverableInterface;
 use frdlweb\Api\Rpc\Server;
 use stdClass;
 
+use Webfan\Homepagesystem\EventFlow\State as EventEmitter;
+
 
 class DiscoverMethod implements MethodDiscoverableInterface
 {
@@ -43,7 +45,7 @@ class DiscoverMethod implements MethodDiscoverableInterface
     protected $server;
     protected $meta = [
 		//'$schema' => 'https://raw.githubusercontent.com/open-rpc/meta-schema/master/schema.json#',
-		'openrpc' => 'GENERATED FIELD: Do Not Edit',
+		'openrpc' => '1.0.0-rc1',
 		"info" => [
               "title" =>  "JSON-RPC Server",
               "description" =>  "This the RPC-part of an Frdlweb API Server definition https://look-up.webfan3.de/?goto=oid%3A1.3.6.1.4.1.37553.8.1.8.1.13878",
@@ -73,17 +75,17 @@ class DiscoverMethod implements MethodDiscoverableInterface
 	protected $cacheTime;
 	
 	
-	public function __construct(Server $server,string $outputfile = null, int $cacheTime = 300){
+	public function __construct( $server,string $outputfile = null, int $cacheTime = 300){
 		$this->cacheTime = $cacheTime;
 		$this->server = $server;
 		$this->outputfile = ($outputfile) ? $outputfile : $_SERVER['DOCUMENT_ROOT'] . \DIRECTORY_SEPARATOR . 'openrpc.json';		
-		
+		$this->meta = array_merge($this->meta, $this->server->getConfig());
 		$this->schema('JSONRpcRequestParameterSpec', ['$ref' => 'https://json-schema.org/draft-07/schema#']);
 	}	
 
 	
 	public function getMeta(){
-		
+	
 	     foreach($this->server->getMethodDefinitions() as $method_name => $serviceId){
 			 
 			
@@ -136,6 +138,8 @@ class DiscoverMethod implements MethodDiscoverableInterface
 				 $method->result = [
 					         '$ref' => 'https://json-schema.org/draft-07/schema#',
 					 ];
+				 
+				 $method->description = '!!!The metadescription of this method is not complete!!!';
 			 }else{
 				throw new MetadataException('Procedure does not match an valid interface in '.__METHOD__); 
 			 }
@@ -143,7 +147,7 @@ class DiscoverMethod implements MethodDiscoverableInterface
 			 $this->meta['methods'][] = $method;
 		 }
 		
-		$this->meta['openrpc'] = 'GENERATED FIELD: Do Not Edit';
+		//$this->meta['openrpc'] = 'GENERATED FIELD: Do Not Edit';
 		$this->meta['components']['examples'] = (object)$this->meta['components']['examples'];
 		$this->meta['components']['links'] = (object)$this->meta['components']['links'];
 		$this->meta['components']['contentDescriptors'] = (object)$this->meta['components']['contentDescriptors'];
@@ -158,12 +162,22 @@ class DiscoverMethod implements MethodDiscoverableInterface
     public function __invoke(\UMA\JsonRpc\Request $request): \UMA\JsonRpc\Response
     {
 		$params = $request->params();
-
-
+          $openrpc = (isset($this->meta['openrpc']))?$this->meta['openrpc']:'1.0.0-rc1';
+try{
+            $meta =  $this->getMeta();
+	      
 	
+	         if($this->server instanceof EventEmitter){
+				 $this->server->on('validate.before', static function($name,$emitter,$event){			
+					 $payload = $event->getArgument('payload');						 
+					  $payload->openrpc = 'GENERATED FIELD: Do Not Edit';	
+					  $event->setArgument('payload', $payload);		
+					
+				 });
+			 }
 		
-		try{
-              return new \UMA\JsonRpc\Success($request->id(), $this->getMeta());					
+	
+              return new \UMA\JsonRpc\Success($request->id(), $meta);					
 		}catch(\Exception $e){
 			return new \UMA\JsonRpc\Error($request->id(), sprintf('Error: `%s`', $e->getMessage()));
 		}

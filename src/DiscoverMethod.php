@@ -143,7 +143,7 @@ class DiscoverMethod implements MethodDiscoverableInterface
 			 $this->meta['methods'][] = $method;
 		 }
 		
-		
+		$this->meta['openrpc'] = 'GENERATED FIELD: Do Not Edit';
 		$this->meta['components']['examples'] = (object)$this->meta['components']['examples'];
 		$this->meta['components']['links'] = (object)$this->meta['components']['links'];
 		$this->meta['components']['contentDescriptors'] = (object)$this->meta['components']['contentDescriptors'];

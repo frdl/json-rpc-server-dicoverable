@@ -24,7 +24,7 @@ $config = [
 		'schemaCacheDir' => sys_get_temp_dir() . \DIRECTORY_SEPARATOR . get_current_user(). \DIRECTORY_SEPARATOR . 'json-schema-store' . \DIRECTORY_SEPARATOR,
 		'discovery' => 	true,
 		'meta' => [
-		  'openrpc' => 'GENERATED FIELD: Do Not Edit',
+		  'openrpc' => '1.0.0-rc1',
 		  "info" => [
               "title" => "JSON-RPC Server",
               "description" =>"This the RPC-part of an Frdlweb API Server definition https://look-up.webfan3.de/?goto=oid%3A1.3.6.1.4.1.37553.8.1.8.1.13878",

@@ -1,2 +1,8 @@
 # json-rpc-server-dicoverable
-uma/json-rpc rpc.dicover method
+extends `uma/json-rpc `
+
+# Added:
+  * `rpc.dicover` method
+    https://spec.open-rpc.org/
+  * Result validation
+  * Remote schema loader

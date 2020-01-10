@@ -11,9 +11,9 @@ use stdClass;
  */
 interface MethodDiscoverableInterface extends \UMA\JsonRpc\Procedure
 {
-  public function discover(DiscoverMethod $DiscoverMethod) : void;
-  public function getResultSpec(): ?\stdClass;
-  public function getSummary(): ?string;
+    public function discover(MethodDiscoverableInterface $DiscoverMethod) : void;
+    public function getResultSpec(): ?\stdClass;
+    public function getSummary(): ?string;
 	public function getDescription(): ?string;
 	public function getLinks(): ?array;
 	public function getExamples(): ?array;

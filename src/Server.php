@@ -112,7 +112,7 @@ class Server /* extends \UMA\JsonRpc\Server */
 		}
     }	
 
-   public function discoveryFactory(ContainerInterface $c) : DiscoverMethod{
+   public function discoveryFactory(ContainerInterface $c) : MethodDiscoverableInterface{
           $DiscoverMethod = new DiscoverMethod($this);
           $DiscoverMethod->config(null, $this->config['meta']);
 	   

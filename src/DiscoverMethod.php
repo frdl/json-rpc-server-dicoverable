@@ -75,11 +75,19 @@ class DiscoverMethod implements MethodDiscoverableInterface
 	protected $cacheTime;
 	
 	
-	public function __construct( $server,string $outputfile = null, int $cacheTime = 300){
+	public function __construct( $server,string $outputfile = null /* false=no output */, int $cacheTime = 300){
 		$this->cacheTime = $cacheTime;
 		$this->server = $server;
-		$this->outputfile = ($outputfile) ? $outputfile : $_SERVER['DOCUMENT_ROOT'] . \DIRECTORY_SEPARATOR . 'openrpc.json';		
-		$this->meta = array_merge($this->meta, $this->server->getConfig());
+			
+		if (in_array('blog', stream_get_wrappers())) { 
+			$this->outputfile = (null !== $outputfile) ? $outputfile : 'blog://www_root/software-center/modules-api/rpc/0.0.2/openrpc.json';	
+		} else {  
+			$this->outputfile = (null !== $outputfile) ? $outputfile : $_SERVER['DOCUMENT_ROOT'] . \DIRECTORY_SEPARATOR . 'openrpc.json';	
+		}
+		
+		
+		$config = $this->server->getConfig();
+		$this->meta = array_merge($this->meta, $config['meta']);
 		$this->schema('JSONRpcRequestParameterSpec', ['$ref' => 'https://json-schema.org/draft-07/schema#']);
 	}	
 
@@ -122,6 +130,35 @@ class DiscoverMethod implements MethodDiscoverableInterface
 					$method->links = $links; 
 				 }
 				 
+				 if(method_exists($procedure,'getTags') ){
+					 $method->tags = $procedure->getTags(); 
+				 }
+				 
+					
+				 if(method_exists($procedure,'getExternalDocs') ){
+					 $method->externalDocs = $procedure->getExternalDocs(); 
+				 }
+				 
+					
+				 if(method_exists($procedure,'getDeprecated') ){
+					 $method->deprecated = $procedure->getDeprecated(); 
+				 }
+				 
+					
+				 if(method_exists($procedure,'getErrors') ){
+					 $method->errors = $procedure->getErrors(); 
+				 }
+				 
+					
+				 if(method_exists($procedure,'getParamStructure') ){
+					 //"by-name" | "by-position" | "either"
+					 $method->paramStructure = $procedure->getParamStructure(); 
+				 }
+				
+				 
+				 if(method_exists($procedure,'getServers') ){
+					 $method->servers = $procedure->getServers(); 
+				 }			 
 				 
 				 $procedure->discover($this);
 				 
@@ -138,6 +175,8 @@ class DiscoverMethod implements MethodDiscoverableInterface
 				 $method->result = [
 					         '$ref' => 'https://json-schema.org/draft-07/schema#',
 					 ];
+				 
+			//	 $method->paramStructure = 'by-name';
 				 
 				 $method->description = '!!!The metadescription of this method is not complete!!!';
 			 }else{
@@ -165,7 +204,9 @@ class DiscoverMethod implements MethodDiscoverableInterface
           $openrpc = (isset($this->meta['openrpc']))?$this->meta['openrpc']:'1.0.0-rc1';
 try{
             $meta =  $this->getMeta();
-	      
+	        if(is_string($this->outputfile)){
+			   file_put_contents($this->outputfile, json_encode($meta));	
+			}
 	
 	         if($this->server instanceof EventEmitter){
 				 $this->server->once('validate.before', static function($name,$emitter,$event){			
@@ -228,7 +269,7 @@ try{
     /**
      * {@inheritdoc}
      */	
-	public function discover(DiscoverMethod $DiscoverMethod) : void {
+	public function discover(MethodDiscoverableInterface $DiscoverMethod) : void {
 		
 	}
 	

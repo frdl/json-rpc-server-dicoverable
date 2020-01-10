@@ -168,7 +168,7 @@ try{
 	      
 	
 	         if($this->server instanceof EventEmitter){
-				 $this->server->on('validate.before', static function($name,$emitter,$event){			
+				 $this->server->once('validate.before', static function($name,$emitter,$event){			
 					 $payload = $event->getArgument('payload');						 
 					  $payload->openrpc = 'GENERATED FIELD: Do Not Edit';	
 					  $event->setArgument('payload', $payload);		

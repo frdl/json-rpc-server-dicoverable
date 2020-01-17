@@ -13,35 +13,7 @@ use Webfan\Homepagesystem\EventFlow\State as EventEmitter;
 
 class DiscoverMethod implements MethodDiscoverableInterface
 {
-	/*
-				'$vars' => [
-				         'subdomain' =>'domainundhomepagespeicher',
-			        	 'host' =>'webfan.de',
-			        	 'port' =>443,
-			        	 'path' =>'/software-center/modules-api/rpc/0.0.2/',
-				],
-				
-	     'variables' => [
-				      'subdomain' => [
-						    'default' => 'domainundhomepagespeicher',
-						    'description' => 'Homepagesystem Workspace Subdomain',
-						  ],
 
-				      'host' => [
-						    'default' => 'webfan.de',
-						    'description' => 'API Provider Domain',
-						  ],		
-				       'port' => [
-						      'default' => 443,
-						   ],
-					   
-				       'path' => [
-						      'default' => '/software-center/modules-api/rpc/0.0.2/',
-						   ],			 
-				  ],
-				
-				
-				*/
     protected $server;
     protected $meta = [
 		//'$schema' => 'https://raw.githubusercontent.com/open-rpc/meta-schema/master/schema.json#',
@@ -205,17 +177,24 @@ class DiscoverMethod implements MethodDiscoverableInterface
 try{
             $meta =  $this->getMeta();
 	        if(is_string($this->outputfile)){
+			   if(!is_dir(dirname($this->outputfile))){
+				 mkdir(dirname($this->outputfile), 0755, true);   
+			   }
 			   file_put_contents($this->outputfile, json_encode($meta));	
 			}
 	
+	
+	
+	
 	         if($this->server instanceof EventEmitter){
-				 $this->server->once('validate.before', static function($name,$emitter,$event){			
-					 $payload = $event->getArgument('payload');						 
+				 $this->server->once('validate.before', static function($name,$emitter,$event){						 
+					 $payload = $event->getArgument('payload');						
 					  $payload->openrpc = 'GENERATED FIELD: Do Not Edit';	
 					  $event->setArgument('payload', $payload);		
-					
+				
 				 });
 			 }
+	
 		
 	
               return new \UMA\JsonRpc\Success($request->id(), $meta);					

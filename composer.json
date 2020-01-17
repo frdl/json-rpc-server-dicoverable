@@ -5,7 +5,7 @@
   "license": ["MIT"],	  
   "require" : {
 	  "php": ">=7.1",
-		"uma/json-rpc" : "^2.1.1"	
+		"uma/json-rpc" : "^2.1.2"	
   },	
   "suggest": {
         "frdl/json-rpc-server-eventable": "Allows using the PRC-Server events"

@@ -135,22 +135,30 @@ class DiscoverMethod implements MethodDiscoverableInterface
 				 $procedure->discover($this);
 				 
 			 }elseif($procedure instanceof  \UMA\JsonRpc\Procedure){
-				 $method->params =[ 
 					 /*
+				 $method->params =[ 
+				
 					 [
 						 'name' => 'JSON-Result',
 						 //$procedure->getSpec()
 						 '$schema' => 'https://json-schema.org/draft-07/schema#',
 					 ]
-					 */
+					
 				  ];
-				 $method->result = [
-					         '$ref' => 'https://json-schema.org/draft-07/schema#',
-					 ];
-				 
+				  */
+				  /*
+				 $method->result = \json_decode('
+{
+  "$ref": "https://json-schema.org/draft-07/schema#"
+}
+'
+        );
+				 */ 
 			//	 $method->paramStructure = 'by-name';
 				 
 				 $method->description = '!!!The metadescription of this method is not complete!!!';
+				 
+				 
 			 }else{
 				throw new MetadataException('Procedure does not match an valid interface in '.__METHOD__); 
 			 }
@@ -256,7 +264,8 @@ try{
    public function getResultSpec(): ?\stdClass {
 	        return \json_decode('
 {
-  "$ref": "https://raw.githubusercontent.com/open-rpc/meta-schema/master/schema.json"
+  "schema": "https://raw.githubusercontent.com/open-rpc/meta-schema/master/schema.json",
+  "name" : "OpenRPC Document"
 }
 '
         );		

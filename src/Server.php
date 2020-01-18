@@ -187,7 +187,7 @@ class Server /* extends \UMA\JsonRpc\Server */
     {
 	
 		
-        $input = Input::fromString($raw);
+        $input = Input::fromString($raw, true);
 
         if (!$input->parsable()) {
             return self::end(Error::parsing());
